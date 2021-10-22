@@ -19,7 +19,7 @@ The steps to configure this:
 1. sudo cp ~root/.emacs ~/  
 2. ls -la .emacs
 3. sudo chown (user):(group) .emacs
-eg sudo chown ubuntu:ubuntu .emacs
+(eg sudo chown ubuntu:ubuntu .emacs)
 
 # If make command is not found
 1. sudo apt-get install -y make

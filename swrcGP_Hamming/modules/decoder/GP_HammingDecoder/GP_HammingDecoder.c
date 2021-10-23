@@ -533,6 +533,79 @@ void initBerResultStructGP_HammingDecoder (GP_HammingDecoderStruct *GP_HammingDe
   //pushBerResultField(berResult,"numberOfCalls","long unsigned int","%13lu",&GP_HammingDecoder->numberOfCalls);
 }
 
+int CheckBits (int p5, int p6, int p7, uint8_t *input){
+
+  printf("\n\n in CheckBits function\n\n");
+  //Check user bit 4
+  if (p6!=input[5] && p7!=input[6] && p5==input[4])
+     {
+       //Got error in bit 4
+       printf("\n\n bit 4 error\n\n");
+       return 4;
+     }
+
+   //Check user bit 3
+  else if (p5!=input[4] && p6!=input[5] && p7==input[6])
+     {
+       //Got error in bit 3
+       printf("\n\n bit 3 error\n\n");
+       return 3;
+     }
+
+   //Check user bit 2
+  else if (p5!=input[4] && p7!=input[6] &&  p6==input[5])
+     {
+       //Got error in bit 2
+       printf("\n\n bit 2 error\n\n");
+       return 2;
+     }
+
+  //Check user bit 1
+  else if (p5!=input[4] && p7!=input[6] && p6!=input[5])
+     {
+       //Got error in bit 1
+       printf("\n\n bit 1 error\n\n");
+       return 1;
+     }
+
+  else
+    {
+      //No user bit error
+      printf("\n\n No bit error\n\n");
+      return 0;
+    }
+
+ 
+
+}
+void  HammingDecoder(GP_HammingDecoderStruct *GP_HammingDecoder, int  N_input, uint8_t *input, uint8_t *output){
+
+  int i, p5, p6, p7, ErrorPos;
+
+  //Calculate new parity bits (after awgn modified user bits)
+   p5 = input[0]^input[1]^input[2];
+   p6 = input[0]^input[2]^input[3];
+   p7 = input[0]^input[1]^input[3];
+
+   //Compare new parity bits to old parity bits from input
+   ErrorPos = CheckBits(p5, p6, p7, input);
+
+   //printf("\n\nErrorpos: %d\n\n",ErrorPos); //debugging
+
+   if (ErrorPos!=0)
+     {
+       //Correcting the error
+       if (input[ErrorPos-1] == 1)
+	 {
+	   output[ErrorPos-1] = 0;
+	 }
+       else
+	 {
+	   output[ErrorPos-1] = 1;
+	 }
+     }
+}
+
 // Finally when everything is in place, the module must be
 // run during the actual simulation. The code for running
 // the module is in this function.
@@ -556,27 +629,13 @@ void runGP_HammingDecoder (GP_HammingDecoderStruct *GP_HammingDecoder, signalStr
   
   // Computation engine :
 
-   //for debugging purposes
+  HammingDecoder(GP_HammingDecoder, N_input, input, output);
+
   
 
-  // printf("\n\n %d \n\n",input[5]);
-  /* 
-  c1=input[4]^input[0]^input[1]^input[2];
-  c2=input[5]^input[0]^input[2]^input[3];
-  c3=input[6]^input[0]^input[1]^input[3];
-
-  c=c3*4 + c2*2 +c1; //finding the error position i think
-
-  if(c==0){
-    printf("\n\n\n NO ERROR \n\n\n");
-  }
-  */
   
-  for (i=0; i<N_output; i++){
-    
-    output[i]=input[i];
-    //printf("\n\n output[%d]: %u",i,output[i]);
-  }
+  
+ 
   
   //for debugging
   printAllSignals(signal); exit(-1);

@@ -506,6 +506,8 @@ void precompSwrcGP_Hamming (swrcGP_HammingStruct *swrcGP_Hamming) {
   ///////////////////////////////////////////////////////////////////////
   /////////////////////////////////////
   swrcGP_Hamming->GP_HammingChannel.N = swrcGP_Hamming->N;
+   swrcGP_Hamming->GP_HammingChannel.K = swrcGP_Hamming->K; 
+
   swrcGP_Hamming->GP_HammingDecoder.K = swrcGP_Hamming->K;
 }
 

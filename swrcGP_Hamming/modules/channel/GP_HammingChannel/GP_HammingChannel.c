@@ -9,6 +9,11 @@
 // Comment   : The first-trial (7,4) Hamming channel module for the  group project 
 //             team 
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#define PI 3.1415926536
+
 #include "GP_HammingChannel.h"
 // Initialize the fields in the module structure
 // Set pointers to NULL (so they can be called with realloc)
@@ -520,15 +525,41 @@ void initBerResultStructGP_HammingChannel (GP_HammingChannelStruct *GP_HammingCh
   //pushBerResultField(berResult,"numberOfCalls","long unsigned int","%13lu",&GP_HammingChannel->numberOfCalls);
 }
 
+double AwgnGenerator(){
+
+  double temp1, temp2, noise;
+  int p=1;
+
+  while (p>0)
+    {
+      temp2 = (rand() /( (double)RAND_MAX ));
+
+      if (temp2 == 0)
+	{p =1;}
+
+      else
+	{p=-1;}
+    }//end while
+
+  temp1 = cos( (2.0 * (double)PI) * rand()/ ((double)RAND_MAX) );
+  noise = sqrt (-2 * log(temp2)) * temp1;
+
+  printf("\n\n noise: %f\n",noise); //debugging
+
+  return noise;
+
+}
+
 // Finally when everything is in place, the module must be
 // run during the actual simulation. The code for running
 // the module is in this function.
 void runGP_HammingChannel (GP_HammingChannelStruct *GP_HammingChannel, signalStruct *signal) {
   int i;
   clock_t beginTime, endTime;
-  int N_input,N_output;
+  int N_input,N_output, N_user;
   uint8_t *input;
   uint8_t *output;
+  double noise;
   beginTime=clock();
   printf("In function runGP_HammingChannel\n");
   // Allocate memory for 1 more signal. The output of this function should go there.
@@ -537,18 +568,23 @@ void runGP_HammingChannel (GP_HammingChannelStruct *GP_HammingChannel, signalStr
   // The type of the input vector should also be set correctly by the USER.
   N_input  = signal->N[signal->N_N-1];        // Length of the input vector
   input    = (uint8_t*) signal->x[signal->N_N-1]; // Assign pointer to the input memory
-  N_output = GP_HammingChannel->N; //has error
+  N_output = GP_HammingChannel->N; 
   // N_output = 7; // Length of output vector
   output   = (uint8_t*) incrementByOneSignal(signal,N_output,0,"GP_HammingChannel");    // Create a new output vector on end of signal list
-  
+  N_user = GP_HammingChannel->K; //length of user bits 
   // Computation engine :
 
-  //output[0]=1;
-  for(i=0; i<N_output; i++){
-    output[i]=input[i];
-  }
 
-  printf("\n\n\n %d \n\n\n ",  GP_HammingChannel->N);
+  int x = rand() % N_user; //finding a random number within user bit index
+  
+  noise = AwgnGenerator();
+  for (i=0; i< N_output; i++)
+    {
+      output[i] = input[i];
+    }
+  output[x] = noise;
+    
+  
 
   // printAllSignals(signal); exit(-1);
   

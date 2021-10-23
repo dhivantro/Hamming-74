@@ -19,6 +19,7 @@ typedef struct GP_HammingChannelStruct {
 // Fields entered by the user during module creation (saved to .cfg file, and initialized by init routine)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   int N;                              // Number of bits being written to the channel
+  int K;
   double R;                           // # rate of the code being used over the channel
   double SNR;                         // # The SNR of the noise on the AWGN channel
 ///////////////////////////////////////////////////////////////////////

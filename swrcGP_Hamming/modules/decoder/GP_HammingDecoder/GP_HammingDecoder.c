@@ -578,9 +578,9 @@ int CheckBits (int p5, int p6, int p7, uint8_t *input){
  
 
 }
-void  HammingDecoder(GP_HammingDecoderStruct *GP_HammingDecoder, int  N_input, uint8_t *input, uint8_t *output){
+void  HammingDecoder(GP_HammingDecoderStruct *GP_HammingDecoder, int  N_input, int N_output, uint8_t *input, uint8_t *output){
 
-  int i, p5, p6, p7, ErrorPos;
+  int i, j, p5, p6, p7, ErrorPos;
 
   //Calculate new parity bits (after awgn modified user bits)
    p5 = input[0]^input[1]^input[2];
@@ -592,18 +592,35 @@ void  HammingDecoder(GP_HammingDecoderStruct *GP_HammingDecoder, int  N_input, u
 
    //printf("\n\nErrorpos: %d\n\n",ErrorPos); //debugging
 
-   if (ErrorPos!=0)
+   if (ErrorPos!=0)//If got error
      {
        //Correcting the error
        if (input[ErrorPos-1] == 1)
 	 {
+	   for(j=0; j<N_output; j++)
+	     {
+	       output[j]=input[j];
+	     }
 	   output[ErrorPos-1] = 0;
 	 }
        else
 	 {
+	    for(j=0; j<N_output; j++)
+	     {
+	       output[j]=input[j];
+	     }
 	   output[ErrorPos-1] = 1;
 	 }
      }
+
+   else //if no error
+     {
+       for(j=0; j<N_output; j++)
+	     {
+	       output[j]=input[j];
+	     }
+     }
+   
 }
 
 // Finally when everything is in place, the module must be
@@ -629,7 +646,7 @@ void runGP_HammingDecoder (GP_HammingDecoderStruct *GP_HammingDecoder, signalStr
   
   // Computation engine :
 
-  HammingDecoder(GP_HammingDecoder, N_input, input, output);
+  HammingDecoder(GP_HammingDecoder, N_input, N_output, input, output);
 
   
 

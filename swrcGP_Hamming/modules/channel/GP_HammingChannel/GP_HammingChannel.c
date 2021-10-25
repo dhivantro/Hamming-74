@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 #define PI 3.1415926536
 
 #include "GP_HammingChannel.h"
@@ -545,8 +546,10 @@ double AwgnGenerator(){
   noise = sqrt (-2 * log(temp2)) * temp1;
 
   printf("\n\n noise: %f\n",noise); //debugging
+  // printf("\n\n temp: %f\n",temp1);
 
-  return noise;
+   return noise;
+   
 
 }
 
@@ -556,7 +559,8 @@ double AwgnGenerator(){
 void runGP_HammingChannel (GP_HammingChannelStruct *GP_HammingChannel, signalStruct *signal) {
   int i;
   clock_t beginTime, endTime;
-  int N_input,N_output, N_user;
+  int N_input,N_output;
+  //int N_user;
   uint8_t *input;
   uint8_t *output;
   double noise;
@@ -571,11 +575,15 @@ void runGP_HammingChannel (GP_HammingChannelStruct *GP_HammingChannel, signalStr
   N_output = GP_HammingChannel->N; 
   // N_output = 7; // Length of output vector
   output   = (uint8_t*) incrementByOneSignal(signal,N_output,0,"GP_HammingChannel");    // Create a new output vector on end of signal list
-  N_user = GP_HammingChannel->K; //length of user bits 
+  // N_user = GP_HammingChannel->K; //length of user bits 
   // Computation engine :
 
-
-  int x = rand() % N_user; //finding a random number within user bit index
+  //Initialise random number generator
+  //If not, the same random number will be generated in each run
+  srand(time(NULL));
+  
+  int x = rand() % N_input; //finding a random number within input signal (from 0 till N_input-1)
+  printf("\n\nrandom index value: %d \n\n",x); //debug
   
   noise = AwgnGenerator();
   for (i=0; i< N_output; i++)
@@ -583,12 +591,17 @@ void runGP_HammingChannel (GP_HammingChannelStruct *GP_HammingChannel, signalStr
       output[i] = input[i];
     }
   //assigning random user bit to a noise
-  //Need to research about noise to parity bits too
-  //and how to detect and correct the error if parity
-  //bits are affected
+  //It will only assign once because Hamming can detect
+  //double bit error but can only correct a single bit
   output[x] =  noise; 
     
-  
+  //Not ideal in real world, but
+  //if line 589 were to be put in the for loop:
+  //there will be additional errors in the signal
+  //remember that Hamming can only correct single bit errors,
+  //So, the final signal might still contain error
+  //This was why the noise was assigned to the output after the for loop
+
 
   // printAllSignals(signal); exit(-1);
   

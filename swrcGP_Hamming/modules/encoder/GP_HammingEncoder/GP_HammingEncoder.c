@@ -587,24 +587,7 @@ void runGP_HammingEncoder (GP_HammingEncoderStruct *GP_HammingEncoder, signalStr
 
    HammingEncoder(GP_HammingEncoder, i, N_input, input, output);
 
-   
-   //to test if this method works or not
-   /*  
-   output[3]=1; 
-   output[5]=1;
-   */
-
-    //Copying user bits to output signal
-  
-   for (i=0; i<N_input; i++){
-
-     output[i] = input[i];
-   }
-   
-   //Calculating parity bits
-   output[4]=input[0]^input[1]^input[2];
-   output[5]=input[0]^input[2]^input[3];
-   output[6]=input[0]^input[1]^input[3];
+ 
 
   //for debugging purposes
   // printAllSignals(signal); exit(-1);

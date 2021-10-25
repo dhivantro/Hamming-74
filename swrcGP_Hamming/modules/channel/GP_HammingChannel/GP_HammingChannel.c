@@ -582,7 +582,11 @@ void runGP_HammingChannel (GP_HammingChannelStruct *GP_HammingChannel, signalStr
     {
       output[i] = input[i];
     }
-  output[x] = noise;
+  //assigning random user bit to a noise
+  //Need to research about noise to parity bits too
+  //and how to detect and correct the error if parity
+  //bits are affected
+  output[x] =  noise; 
     
   
 

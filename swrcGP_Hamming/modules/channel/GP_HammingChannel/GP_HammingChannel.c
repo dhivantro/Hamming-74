@@ -529,7 +529,7 @@ void initBerResultStructGP_HammingChannel (GP_HammingChannelStruct *GP_HammingCh
 double AwgnGenerator(){
 
   double temp1, temp2, noise;
-  int p=1;
+  int p=1, snr;
 
   while (p>0)
     {
@@ -542,9 +542,26 @@ double AwgnGenerator(){
 	{p=-1;}
     }//end while
 
-  temp1 = cos( (2.0 * (double)PI) * rand()/ ((double)RAND_MAX) );
-  noise = sqrt (-2 * log(temp2)) * temp1;
+   temp1 = cos( (2.0 * (double)PI) * rand()/ ((double)RAND_MAX) );
+   noise = sqrt (-2 * log(temp2)) * temp1;
 
+  // snr = 20; //20dB //Choosing random value
+   
+  //CALCULATE SIGNAL POWER, sigp
+   //sigp = 10* log10 (normalized input signal)/(N_input)
+   //Need to find out how to normalize the signal
+   //Need to find out how to find avg power of signal array
+   //sigp = 1; 
+   
+  //CALCULATE NOISE POWER, noisep 
+   //snr = sigp - noisep (in dB)
+   //noise_db = sigp - snr (noise_db is in dB)
+   //noisep = pow(10,(noise_db/10))
+
+  //CALCULATE NOISE, noise
+   //noise = sqrt(noisep) * (a random num which is normally distributed with mean=0 and var=1)
+  
+  
   printf("\n\n noise: %f\n",noise); //debugging
   // printf("\n\n temp: %f\n",temp1);
 
@@ -583,9 +600,13 @@ void runGP_HammingChannel (GP_HammingChannelStruct *GP_HammingChannel, signalStr
   srand(time(NULL));
   
   int x = rand() % N_input; //finding a random number within input signal (from 0 till N_input-1)
-  printf("\n\nrandom index value: %d \n\n",x); //debug
+  // printf("\n\nrandom index value: %d \n\n",x); //debug
+
+ 
+ 
+ printf("\n\n randn: %f\n\n", SWRC_randn(&N_input));
   
-  noise = AwgnGenerator();
+   noise = AwgnGenerator();
   for (i=0; i< N_output; i++)
     {
       output[i] = input[i];

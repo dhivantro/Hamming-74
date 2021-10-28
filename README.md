@@ -10,6 +10,7 @@ ie the 3 parity bits are placed on index 4,5,6 on a 4 user bit signal
 
 # Software
 This project was executed using Emacs in a Ubuntu 20.04 Virtual Machine
+(Dual boot using USB previously)
 
 # Configuring Emacs
 In Emacs, the files can be executed using F5.

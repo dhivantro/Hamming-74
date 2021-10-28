@@ -14,5 +14,9 @@
 #### 4. Calculate noise
     noise = sqrt(noisepower) * randn(size of input signal)
     
+#### 5. Convert analog noise to digital noise
+    (if noise>0) --> noisedig=1
+    else         --> noisedig=0
+    
 #### 5. Apply additive calculation 
-    output = noise+input
+    output = input + noisedig

@@ -526,26 +526,36 @@ void initBerResultStructGP_HammingChannel (GP_HammingChannelStruct *GP_HammingCh
   //pushBerResultField(berResult,"numberOfCalls","long unsigned int","%13lu",&GP_HammingChannel->numberOfCalls);
 }
 
-float AwgnGenerator( int N_input){
+float AwgnGenerator(GP_HammingChannelStruct *GP_HammingChannel, int N_input){
 
-  int snr, sigp;
-  float noisep, noise;
-
+  int   sigp;
+  double variance, noise, noisep;
+  double snr, snr_db=GP_HammingChannel->SNR, R;
+  int seed = 1;
+  int *seedptr = &seed;
 
    
-  //CALCULATE SIGNAL POWER, sigp
-  sigp = 5; 
+  //CALCULATE R
+  R = (double)(GP_HammingChannel->K)/(double)(GP_HammingChannel->N);
+  // printf("\n\nR: %f", R);
+  // sigp = 1;
    
   //CALCULATE SNR
-  snr = pow(10,(sigp/10));
-  printf("\n\nsnr: %d",snr);
+  snr_db = 10.0;   //in dB
+  // snr = pow(10,(snr_db/10));
+  //printf("\n\nsnr_db: %f",snr_db);
 
-  //CALCULATE NOISE, noise
-  noisep = sigp/snr;
+  //CALCULATE NOISE VARIANCE, variance
+  // noisep = sigp/snr;
+   // noise = sqrt(noisep);
+    variance = 1.0 / (R * pow(10,(snr_db/10)));
+  // printf("\n\nswrc_randn: %f",SWRC_randn(seedptr));
 
-  noise = sqrt(noisep) * SWRC_randn(&N_input);
-  
-  printf("\n\n noise: %f\n",noise); //debugging
+  //CALCULATE NOISE
+  //multiple standard deviation with gaussian random variable of mean 0 and variance 1
+   noise = sqrt(variance) * SWRC_randn(seedptr);
+   // noise = sqrt(variance);
+ 
 
   return noise;
    
@@ -582,21 +592,23 @@ void runGP_HammingChannel (GP_HammingChannelStruct *GP_HammingChannel, signalStr
   srand(time(NULL));
   
   int x = rand() % N_input; //finding a random number within input signal (from 0 till N_input-1)
-   printf("\n\nrandom index value: %d \n\n",x); //debug
+  // printf("\n\nrandom index value: %d \n\n",x); //debug
 
  
  
   //printf("\n\n randn: %f\n\n", SWRC_randn(&N_input));
  
   
-   noise = AwgnGenerator(N_input);
+  // noise = AwgnGenerator(GP_HammingChannel, N_input);
+  //  printf("\n\n noise: %.5f\n",noise); //debugging
+   
    int noisedig; //digital bits
 
    //Converting noise to digital bits
-     if(noise>0)
-    {noisedig=1;}
-   else
-     {noisedig=0;}
+   //  if(noise>0)
+   //   {noisedig=1;}
+   //  else
+   //   {noisedig=0;}
    
      // float temp [N_input];
 
@@ -611,12 +623,36 @@ void runGP_HammingChannel (GP_HammingChannelStruct *GP_HammingChannel, signalStr
    
   for (i=0; i< N_output; i++)
     {
-      output[i] = input[i];
+      noise = AwgnGenerator(GP_HammingChannel, N_input);
+
+      //     if(noise>0)
+      //  {noisedig=1;}
+      // else
+      //  {noisedig=0;}
+
+      
+      output[i] = input[i]+ noise;
+      //  if(output[i]==2)
+      //	 {output[i]=1;}
+       
+      //  printf("\n\nnoise: %f \tnoidedig: %d", noise,noisedig);
+ 
+      // output[i] = input[i];
     }
+
+  //hard-decision decoding
+  for(i=0; i<N_output; i++)
+    {
+      if(output[i]>0)
+	{output[i]=1;}
+      else
+	{output[i]=0;}
+    }
+
+
   //assigning random user bit to a noise
   //It will only assign once because Hamming can detect
   //double bit error but can only correct a single bit
-  output[x] = input[x]+ noisedig; 
     
   //Not ideal in real world, but
   //if line 589 were to be put in the for loop:

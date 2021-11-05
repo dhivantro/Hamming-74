@@ -627,7 +627,7 @@ void  HammingDecoder(GP_HammingDecoderStruct *GP_HammingDecoder, int  N_input, i
 // run during the actual simulation. The code for running
 // the module is in this function.
 void runGP_HammingDecoder (GP_HammingDecoderStruct *GP_HammingDecoder, signalStruct *signal) {
-  int i,c,c1,c2,c3;
+  int i,c1,c2,c3;
   clock_t beginTime, endTime;
   int N_input,N_output;
   uint8_t *input;
@@ -646,16 +646,54 @@ void runGP_HammingDecoder (GP_HammingDecoderStruct *GP_HammingDecoder, signalStr
   
   // Computation engine :
 
-  HammingDecoder(GP_HammingDecoder, N_input, N_output, input, output);
+  // HammingDecoder(GP_HammingDecoder, N_input, N_output, input, output);
 
-  
+  //using syndromes (jw):
 
+  //3 equations based on tanner graph
+  int a, b, c;
+  a=input[0]+input[1]+input[2]+input[4];
+  b=input[0]+input[2]+input[3]+input[5];
+  c=input[0]+input[1]+input[3]+input[6];
+
+
+  // //check the result of calculation of a,b,c
+  // printf("a: %d, b: %d, c: %d\n", a, b, c);
+  // printf("a: %d, b: %d, c: %d\n", a%2, b%2, c%2);
+
+ 
+
+  //copy the user bits from input to output
+  for (i=0;i<N_output;i++)
+    {
+      output[i]=input[i];
+    }
   
-  
+  if ((b%2)!=0 &&  (c%2)!=0)
+    {
+      printf("\n\nbit 4 error\n\n ");
+      output[3]=!input[3];
+    }
+  if ((a%2)!=0 &&  (b%2)!=0)
+    {
+      printf("\n\nbit 3 error\n\n ");
+      output[2]=!input[2];
+    }
+  if ((a%2)!=0 &&  (c%2)!=0)
+    {
+      printf("\n\nbit 2 error\n\n");
+      output[1]=!input[1];
+    }
+  if ((a%2)!=0 && (b%2)!=0 && (c%2)!=0)
+    {
+      printf("\n\nbit 1 error\n\n");
+      output[0]=!input[0];
+    }
+
  
   
   //for debugging
-  printAllSignals(signal); exit(-1);
+  // printAllSignals(signal); exit(-1);
   
    
   

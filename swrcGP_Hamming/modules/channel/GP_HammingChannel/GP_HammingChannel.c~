@@ -9,6 +9,12 @@
 // Comment   : The first-trial (7,4) Hamming channel module for the  group project 
 //             team 
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+#define PI 3.1415926536
+
 #include "GP_HammingChannel.h"
 // Initialize the fields in the module structure
 // Set pointers to NULL (so they can be called with realloc)
@@ -520,6 +526,34 @@ void initBerResultStructGP_HammingChannel (GP_HammingChannelStruct *GP_HammingCh
   //pushBerResultField(berResult,"numberOfCalls","long unsigned int","%13lu",&GP_HammingChannel->numberOfCalls);
 }
 
+float AwgnGenerator(GP_HammingChannelStruct *GP_HammingChannel, int N_input){
+
+  int  sigp;
+  float noisep, noise;
+  double snr, snr_db=GP_HammingChannel->SNR;
+
+
+   
+  //CALCULATE SIGNAL POWER, sigp
+  sigp = 1; 
+   
+  //CALCULATE SNR
+  snr_db = 6;   //in dB
+  snr = pow(10,(snr_db/10));
+  printf("\n\nsnr_db: %f",snr_db);
+
+  //CALCULATE NOISE, noise
+  noisep = sigp/snr;
+
+  noise = sqrt(noisep) * SWRC_randn(&N_input);
+  //noise = sqrt(noisep);
+  printf("\n\n noise: %f\n",noise); //debugging
+
+  return noise;
+   
+
+}
+
 // Finally when everything is in place, the module must be
 // run during the actual simulation. The code for running
 // the module is in this function.
@@ -527,8 +561,10 @@ void runGP_HammingChannel (GP_HammingChannelStruct *GP_HammingChannel, signalStr
   int i;
   clock_t beginTime, endTime;
   int N_input,N_output;
+  //int N_user;
   uint8_t *input;
   uint8_t *output;
+  float noise;
   beginTime=clock();
   printf("In function runGP_HammingChannel\n");
   // Allocate memory for 1 more signal. The output of this function should go there.
@@ -537,18 +573,60 @@ void runGP_HammingChannel (GP_HammingChannelStruct *GP_HammingChannel, signalStr
   // The type of the input vector should also be set correctly by the USER.
   N_input  = signal->N[signal->N_N-1];        // Length of the input vector
   input    = (uint8_t*) signal->x[signal->N_N-1]; // Assign pointer to the input memory
-  // N_output = GP_HammingChannel->N; //has error
-  N_output = 7; // Length of output vector
+  N_output = GP_HammingChannel->N; 
+  // N_output = 7; // Length of output vector
   output   = (uint8_t*) incrementByOneSignal(signal,N_output,0,"GP_HammingChannel");    // Create a new output vector on end of signal list
-  
+  // N_user = GP_HammingChannel->K; //length of user bits 
   // Computation engine :
 
-  //output[0]=1;
-  for(i=0; i<N_output; i++){
-    output[i]=input[i];
-  }
+  //Initialise random number generator
+  //If not, the same random number will be generated in each run
+  srand(time(NULL));
+  
+  int x = rand() % N_input; //finding a random number within input signal (from 0 till N_input-1)
+   printf("\n\nrandom index value: %d \n\n",x); //debug
 
-  printf("\n\n\n %d \n\n\n ",  GP_HammingChannel->N);
+ 
+ 
+  //printf("\n\n randn: %f\n\n", SWRC_randn(&N_input));
+ 
+  
+   noise = AwgnGenerator(GP_HammingChannel, N_input);
+   int noisedig; //digital bits
+
+   //Converting noise to digital bits
+     if(noise>0)
+    {noisedig=1;}
+   else
+     {noisedig=-1;}
+   
+     // float temp [N_input];
+
+   /*  for(i=0;i<N_input;i++)
+     {
+       if(input[i] == 0)
+	 {temp[i] = -1.0;}
+       else
+	 {temp[i] = 1.0;}
+     } 
+*/
+   
+  for (i=0; i< N_output; i++)
+    {
+      output[i] = input[i];
+    }
+  //assigning random user bit to a noise
+  //It will only assign once because Hamming can detect
+  //double bit error but can only correct a single bit
+  output[x] = input[x]+ noisedig; 
+    
+  //Not ideal in real world, but
+  //if line 589 were to be put in the for loop:
+  //there will be additional errors in the signal
+  //remember that Hamming can only correct single bit errors,
+  //So, the final signal might still contain error
+  //This was why the noise was assigned to the output after the for loop
+
 
   // printAllSignals(signal); exit(-1);
   

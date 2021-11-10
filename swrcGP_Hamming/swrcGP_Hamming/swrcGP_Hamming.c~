@@ -154,7 +154,7 @@ void freeSwrcGP_HammingStruct (swrcGP_HammingStruct *swrcGP_Hamming) {
   swrcGP_Hamming->numberOfFrames=0;
   swrcGP_Hamming->numberOfFrameErrors=0;
   swrcGP_Hamming->minNumberOfFrames=1000;
-  swrcGP_Hamming->minNumberOfFrameErrors=50;
+  swrcGP_Hamming->minNumberOfFrameErrors=300;
   swrcGP_Hamming->maxNumberOfFrames=10000;
   swrcGP_Hamming->numberOfBits  =0;
   swrcGP_Hamming->numberOfBitErrors=0;
@@ -381,6 +381,8 @@ void setParmSwrcGP_HammingStruct (swrcGP_HammingStruct *swrcGP_Hamming, char *ar
    if (SWRC_readSingleArgumentFromString(arg,"N",&swrcGP_Hamming->N,"%d")==1) {
      printf("N=%d\n",swrcGP_Hamming->N);
    }
+
+  
   // if (SWRC_readSingleArgumentFromString(arg,"numberOfFrames",&swrcGP_Hamming->numberOfFrames,"%d")==1) {
   //   printf("numberOfFrames=%d\n",swrcGP_Hamming->numberOfFrames);
   // }
@@ -680,13 +682,13 @@ void runSwrcGP_Hamming (swrcGP_HammingStruct *swrcGP_Hamming) {
     //////////////////////////////////
     SWRC_printHeader("3. GP_HammingDecoder");
     runGP_HammingDecoder(&swrcGP_Hamming->GP_HammingDecoder,&swrcGP_Hamming->signal);
-    printAllSignals(&swrcGP_Hamming->signal);exit(-1);
+    // printAllSignals(&swrcGP_Hamming->signal);exit(-1);
     //////////////////////////////////
     // 4. Count BER
     //////////////////////////////////
     SWRC_printHeader("4. Count BER");
-    countBERSwrcGP_Hamming(swrcGP_Hamming,0,2); // Count the bit/frame errors. "1" and "5" are the indices of the 2 signals being compared and are hard-coded. User must set these values appropriately for their simulation.
-    // printAllSignals(&swrcGP_Hamming->signal);//exit(-1);
+     countBERSwrcGP_Hamming(swrcGP_Hamming,0,3); // Count the bit/frame errors. "1" and "5" are the indices of the 2 signals being compared and are hard-coded. User must set these values appropriately for their simulation.
+      printAllSignals(&swrcGP_Hamming->signal);//exit(-1);
 
     postcompSwrcGP_Hamming(swrcGP_Hamming,' '); // ' ' is a flag indicating this simulation is still ongoing
     saveBerResultFile(&berResult,&swrcGP_Hamming->startTime,&swrcGP_Hamming->endTime,&swrcGP_Hamming->runTime,swrcGP_Hamming->dumpEvery); // Try to save berResult

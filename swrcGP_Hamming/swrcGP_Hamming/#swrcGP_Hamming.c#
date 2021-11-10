@@ -120,8 +120,8 @@ void initSwrcGP_HammingStruct (swrcGP_HammingStruct *swrcGP_Hamming) {
   swrcGP_Hamming->N                   = 0;
   swrcGP_Hamming->numberOfFrames      = 0;
   swrcGP_Hamming->numberOfFrameErrors = 0;
-  swrcGP_Hamming->minNumberOfFrames   = 3000;
-  swrcGP_Hamming->minNumberOfFrameErrors = 100;
+  swrcGP_Hamming->minNumberOfFrames   = 1000;
+  swrcGP_Hamming->minNumberOfFrameErrors = 50;
   swrcGP_Hamming->maxNumberOfFrames   = 10000;
   swrcGP_Hamming->numberOfBits        = 0;
   swrcGP_Hamming->numberOfBitErrors   = 0;
@@ -154,7 +154,7 @@ void freeSwrcGP_HammingStruct (swrcGP_HammingStruct *swrcGP_Hamming) {
   swrcGP_Hamming->numberOfFrames=0;
   swrcGP_Hamming->numberOfFrameErrors=0;
   swrcGP_Hamming->minNumberOfFrames=1000;
-  swrcGP_Hamming->minNumberOfFrameErrors=300;
+  swrcGP_Hamming->minNumberOfFrameErrors=500;
   swrcGP_Hamming->maxNumberOfFrames=10000;
   swrcGP_Hamming->numberOfBits  =0;
   swrcGP_Hamming->numberOfBitErrors=0;

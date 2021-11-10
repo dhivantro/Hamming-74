@@ -542,7 +542,7 @@ float AwgnGenerator(GP_HammingChannelStruct *GP_HammingChannel, int N_input){
   // sigp = 1;
    
   //CALCULATE SNR
-   snr_db = 10;   //in dB
+   snr_db = 0.0;   //in dB
    // snr = pow(10,(snr_db/10));
   //printf("\n\nsnr_db: %f",snr_db);
 

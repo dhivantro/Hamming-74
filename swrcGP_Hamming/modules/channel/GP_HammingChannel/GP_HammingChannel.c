@@ -659,7 +659,7 @@ void runGP_HammingChannel (GP_HammingChannelStruct *GP_HammingChannel, signalStr
       if(temp_output[i]>0)
 	{output[i]=1;}
       else
-	{temp_output[i]=0;}
+	{output[i]=0;}
     }
 
   

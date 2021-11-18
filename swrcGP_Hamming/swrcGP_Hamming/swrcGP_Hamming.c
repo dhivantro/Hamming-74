@@ -153,8 +153,8 @@ void freeSwrcGP_HammingStruct (swrcGP_HammingStruct *swrcGP_Hamming) {
   swrcGP_Hamming->N             =0;
   swrcGP_Hamming->numberOfFrames=0;
   swrcGP_Hamming->numberOfFrameErrors=0;
-  swrcGP_Hamming->minNumberOfFrames=1000;
-  swrcGP_Hamming->minNumberOfFrameErrors=300;
+  swrcGP_Hamming->minNumberOfFrames=3000;
+  swrcGP_Hamming->minNumberOfFrameErrors=100;
   swrcGP_Hamming->maxNumberOfFrames=10000;
   swrcGP_Hamming->numberOfBits  =0;
   swrcGP_Hamming->numberOfBitErrors=0;
@@ -383,12 +383,12 @@ void setParmSwrcGP_HammingStruct (swrcGP_HammingStruct *swrcGP_Hamming, char *ar
    }
 
   
-  // if (SWRC_readSingleArgumentFromString(arg,"numberOfFrames",&swrcGP_Hamming->numberOfFrames,"%d")==1) {
-  //   printf("numberOfFrames=%d\n",swrcGP_Hamming->numberOfFrames);
-  // }
-  // if (SWRC_readSingleArgumentFromString(arg,"numberOfFrameErrors",&swrcGP_Hamming->numberOfFrameErrors,"%d")==1) {
-  //   printf("numberOfFrameErrors=%d\n",swrcGP_Hamming->numberOfFrameErrors);
-  // }
+   if (SWRC_readSingleArgumentFromString(arg,"numberOfFrames",&swrcGP_Hamming->numberOfFrames,"%d")==1) {
+     printf("numberOfFrames=%d\n",swrcGP_Hamming->numberOfFrames);
+   }
+   if (SWRC_readSingleArgumentFromString(arg,"numberOfFrameErrors",&swrcGP_Hamming->numberOfFrameErrors,"%d")==1) {
+     printf("numberOfFrameErrors=%d\n",swrcGP_Hamming->numberOfFrameErrors);
+   }
    if (SWRC_readSingleArgumentFromString(arg,"minNumberOfFrames",&swrcGP_Hamming->minNumberOfFrames,"%d")==1) {
      printf("minNumberOfFrames=%d\n",swrcGP_Hamming->minNumberOfFrames);
    }

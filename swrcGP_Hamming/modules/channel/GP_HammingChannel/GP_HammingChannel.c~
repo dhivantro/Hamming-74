@@ -536,26 +536,26 @@ float AwgnGenerator(GP_HammingChannelStruct *GP_HammingChannel, int N_input){
 
    
   //CALCULATE R
-   R = (double)(GP_HammingChannel->K)/(double)(GP_HammingChannel->N);
-   // R=1;
+  // R = (double)(GP_HammingChannel->K)/(double)(GP_HammingChannel->N);
+    R=1;
   // printf("\n\nR: %f", R);
   // sigp = 1;
    
   //CALCULATE SNR
-   snr_db = 10.0;   //in dB
-  // snr = pow(10,(snr_db/10));
+    snr_db = 3;   //in dB
+   // snr = pow(10,(snr_db/10));
   //printf("\n\nsnr_db: %f",snr_db);
 
   //CALCULATE NOISE VARIANCE, variance
   // noisep = sigp/snr;
    // noise = sqrt(noisep);
-    variance = 1.0 / (R * pow(10,(snr_db/10)));
+     variance = 1.0 / (R * pow(10,(snr_db/10)));
   // printf("\n\nswrc_randn: %f",SWRC_randn(seedptr));
 
   //CALCULATE NOISE
   //multiple standard deviation with gaussian random variable of mean 0 and variance 1
-   noise = sqrt(variance) * SWRC_randn(seedptr);
-   // noise = sqrt(variance);
+      noise = sqrt(variance) * SWRC_randn(seedptr);
+  
  
 
   return noise;
@@ -630,6 +630,8 @@ void runGP_HammingChannel (GP_HammingChannelStruct *GP_HammingChannel, signalStr
        else
 	 {temp_input[i]=1;}
      }
+
+   double temp_output[N_output];
    
   for (i=0; i< N_output; i++)
     {
@@ -641,7 +643,7 @@ void runGP_HammingChannel (GP_HammingChannelStruct *GP_HammingChannel, signalStr
       //  {noisedig=0;}
 
       
-      output[i] = input[i]+ noise;
+      temp_output[i] = temp_input[i]+ noise;
       
       //  if(output[i]==2)
       //	 {output[i]=1;}
@@ -654,7 +656,7 @@ void runGP_HammingChannel (GP_HammingChannelStruct *GP_HammingChannel, signalStr
   //hard-decision decoding
   for(i=0; i<N_output; i++)
     {
-      if(output[i]>0)
+      if(temp_output[i]>0)
 	{output[i]=1;}
       else
 	{output[i]=0;}

@@ -537,19 +537,19 @@ float AwgnGenerator(GP_HammingChannelStruct *GP_HammingChannel, int N_input){
    
   //CALCULATE R
    R = (double)(GP_HammingChannel->K)/(double)(GP_HammingChannel->N);
-   // R=1;
+  // R=1;
   // printf("\n\nR: %f", R);
   // sigp = 1;
    
   //CALCULATE SNR
-   snr_db = 10;   //in dB
+    snr_db =10;   //in dB
    // snr = pow(10,(snr_db/10));
   //printf("\n\nsnr_db: %f",snr_db);
 
   //CALCULATE NOISE VARIANCE, variance
   // noisep = sigp/snr;
    // noise = sqrt(noisep);
-     variance = 1.0 / (R * pow(10,(snr_db/10)));
+     variance = 1.0 / (2*R * pow(10,(snr_db/10)));
   // printf("\n\nswrc_randn: %f",SWRC_randn(seedptr));
 
   //CALCULATE NOISE
